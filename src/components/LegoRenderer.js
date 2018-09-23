@@ -8,6 +8,9 @@ import { connect } from 'react-redux'
 
 import { remapPixelColours } from '../libs/colour-utils'
 import { convertURIToImageData, scaleImageData } from '../libs/image-utils'
+import calculateFromImageData from '../libs/lego/calculateOptimalBricks'
+import { renderImageDataAsLego } from '../libs/renderLego'
+import cropCanvas from '../libs/crop-canvas'
 
 class LegoRenderer extends Component {
   // state = {
@@ -51,27 +54,59 @@ class LegoRenderer extends Component {
       console.error('sourceData is undefined')
       return
     }
-    convertURIToImageData(this.props.sourceData)
-      .then(originalImageData => {
-        // setImageData(originalImageData);
-        console.log('stuff')
+    convertURIToImageData(this.props.sourceData).then(originalImageData => {
+      // setImageData(originalImageData);
+      console.log('stuff')
 
-        let { imageData } = remapPixelColours(originalImageData)
+      let { imageData } = remapPixelColours(originalImageData)
 
-        // this.setState({
-        //   dimensions: {
-        //     width: originalImageData.width * pixelScaler,
-        //     height: originalImageData.height * pixelScaler,
-        //   },
-        // })
+      // this.setState({
+      //   dimensions: {
+      //     width: originalImageData.width * pixelScaler,
+      //     height: originalImageData.height * pixelScaler,
+      //   },
+      // })
 
-        this.drawImageData(this.refs.canvas, imageData)
+      // const croppedImage = cropCanvas(imageData)
+      // if (imageData) {
+      // const calculator = new CalculateOptimalBricks()
 
-        this.drawImageData(this.refs.original_canvas, originalImageData)
-      })
-      .catch(e => {
-        console.error(e)
-      })
+      // if (imageData) {
+      if (!imageData) return
+      this.refs.offscreen_canvas.width = imageData.width
+      this.refs.offscreen_canvas.height = imageData.height
+      // this.drawImageData(this.refs.offscreen_canvas, imageData)
+      const ctx = this.refs.offscreen_canvas.getContext('2d')
+      ctx.imageSmoothingEnabled = false
+
+      const scaledImageData = scaleImageData(ctx, imageData, 1)
+      ctx.putImageData(scaledImageData, 0, 0)
+      // }
+
+      this.drawImageData(this.refs.canvas, imageData)
+
+      this.drawImageData(this.refs.original_canvas, originalImageData)
+
+      // const cropped = cropCanvas(this.refs.canvas)
+
+      const optimalData = calculateFromImageData(scaledImageData)
+      console.log('optimalData', optimalData)
+
+      renderImageDataAsLego(
+        this.refs.canvas_lego,
+        // this.props.height,
+        // 264,
+        optimalData,
+        96,
+        96
+        // this.props.width,
+        // this.props.height
+      )
+      // }
+    })
+    // .catch(e => {
+    //   console.error(e)
+    // })
   }
 
   drawImageData(canvas, imageData) {
@@ -101,15 +136,21 @@ class LegoRenderer extends Component {
   render() {
     return (
       <div className={this.props.className}>
+        <canvas style={{ display: 'none' }} ref="offscreen_canvas" />
+        <canvas
+          ref="canvas_lego"
+          width={this.props.width}
+          height={this.props.width}
+        />
         <canvas
           ref="canvas"
           width={this.props.width}
-          height={this.props.height / 2}
+          height={this.props.width}
         />
         <canvas
           ref="original_canvas"
           width={this.props.width}
-          height={this.props.height / 2}
+          height={this.props.width}
         />
         <style>{`
           div {

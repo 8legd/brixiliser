@@ -4,7 +4,7 @@ import { Link } from 'gatsby'
 import Layout from '../components/layout'
 import LegoRenderer from '../components/LegoRenderer'
 
-const imageData = require('../images/sprites/pokemon/25.png')
+const imageData = require('../images/sprites/pokemon/98.png')
 // console.log(imageData)
 
 const IndexPage = () => {
