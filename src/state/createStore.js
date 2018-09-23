@@ -12,9 +12,14 @@ const reducer = (state, action) => {
 }
 
 const initialState = {
-  count: 0,
-  imageURL: require('../images/sprites/pokemon/25.png'),
+  // count: 0,
+  // imageURL: require('../images/sprites/pokemon/25.png'),
 }
 
-const createStore = () => reduxCreateStore(reducer, initialState)
+const createStore = () =>
+  reduxCreateStore(
+    reducer,
+    initialState /* preloadedState, */,
+    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+  )
 export default createStore

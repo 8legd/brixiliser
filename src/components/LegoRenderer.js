@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import MeasureIt from 'react-measure-it'
+// import MeasureIt from 'react-measure-it'
+import { withContentRect } from 'react-measure'
+
 import { connect } from 'react-redux'
 // import { bindActionCreators } from 'redux'
 // import { setImageData } from '../store'
@@ -8,45 +10,92 @@ import { remapPixelColours } from '../libs/colour-utils'
 import { convertURIToImageData, scaleImageData } from '../libs/image-utils'
 
 class LegoRenderer extends Component {
-  state = {
-    dimensions: {
-      width: -1,
-      height: -1,
-    },
+  // state = {
+  //   // dimensions: {
+  //   //   width: -1,
+  //   //   height: -1,
+  //   // },
+  //   // sourceData,
+  //   // originalImageData,
+  // }
+
+  constructor(props) {
+    super(props)
+    if (props && props.sourceData) {
+      this.updateCanvas()
+    }
   }
 
   componentDidMount() {
+    console.log('componentDidMount')
     this.updateCanvas()
   }
 
-  componentDidUpdate() {
+  // componentDidUpdate() {
+  //   this.updateCanvas()
+  // }
+
+  componentDidUpdate(prevProps) {
+    console.log(
+      'componentDidUpdate',
+      this.props.sourceData !== prevProps.sourceData
+    )
+    // if (this.props.sourceData !== prevProps.sourceData) {
     this.updateCanvas()
+    // }
   }
 
   updateCanvas() {
-    convertURIToImageData(this.props.sourceData).then(originalImageData => {
-      // setImageData(originalImageData);
-      const canvas = this.refs.canvas
-      const ctx = this.refs.canvas.getContext('2d')
-      ctx.imageSmoothingEnabled = false
+    console.log('updateCanvas', this.props.sourceData)
+    if (!this.props.sourceData) {
+      console.error('sourceData is undefined')
+      return
+    }
+    convertURIToImageData(this.props.sourceData)
+      .then(originalImageData => {
+        // setImageData(originalImageData);
+        console.log('stuff')
 
-      let { imageData } = remapPixelColours(originalImageData)
-      // let imageData = originalImageData
+        let { imageData } = remapPixelColours(originalImageData)
 
-      const pixelScaler = Math.floor(
-        this.props.containerWidth / originalImageData.width
-      )
-      this.setState({
-        dimensions: {
-          width: originalImageData.width * pixelScaler,
-          height: originalImageData.height * pixelScaler,
-        },
+        // this.setState({
+        //   dimensions: {
+        //     width: originalImageData.width * pixelScaler,
+        //     height: originalImageData.height * pixelScaler,
+        //   },
+        // })
+
+        this.drawImageData(this.refs.canvas, imageData)
+
+        this.drawImageData(this.refs.original_canvas, originalImageData)
       })
+      .catch(e => {
+        console.error(e)
+      })
+  }
 
-      const scaledImageData = scaleImageData(ctx, imageData, pixelScaler)
+  drawImageData(canvas, imageData) {
+    console.log('drawImageData')
+    // const canvas =
+    const ctx = canvas.getContext('2d')
+    ctx.imageSmoothingEnabled = false
+    // let imageData = originalImageData
 
-      ctx.putImageData(scaledImageData, 0, 0)
-    })
+    const pixelScaler = Math.floor(this.props.width / imageData.width)
+    // const pixelScaler = this.props.width / imageData.width
+
+    console.log('pixelScaler', pixelScaler)
+
+    // this.setState({
+    //   dimensions: {
+    //     width: imageData.width * pixelScaler,
+    //     height: imageData.height * pixelScaler,
+    //   },
+    // })
+
+    const scaledImageData = scaleImageData(ctx, imageData, pixelScaler)
+
+    ctx.putImageData(scaledImageData, 0, 0)
   }
 
   render() {
@@ -54,8 +103,13 @@ class LegoRenderer extends Component {
       <div className={this.props.className}>
         <canvas
           ref="canvas"
-          width={this.state.dimensions.width}
-          height={this.state.dimensions.height}
+          width={this.props.width}
+          height={this.props.height / 2}
+        />
+        <canvas
+          ref="original_canvas"
+          width={this.props.width}
+          height={this.props.height / 2}
         />
         <style>{`
           div {
@@ -66,8 +120,8 @@ class LegoRenderer extends Component {
           }
 
           canvas {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vw;
             background: white;
           }
         `}</style>
@@ -76,10 +130,12 @@ class LegoRenderer extends Component {
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
   // console.log('imageURL', state)
+  console.log('props: ', props)
   return {
-    sourceData: state.imageURL,
+    ...props,
+    // sourceData: state.imageURL,
   }
 }
 
@@ -91,9 +147,25 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
+// export default connect(
+//   mapStateToProps,
+//   mapDispatchToProps
+// )(MeasureIt()(LegoRenderer))
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MeasureIt()(LegoRenderer))
+)(
+  withContentRect('bounds')(
+    ({ measureRef, measure, contentRect, ...props }) => {
+      console.log('contentRect.bounds', contentRect.bounds)
+      console.log('props', props)
+      return (
+        <div ref={measureRef}>
+          <LegoRenderer {...props} {...contentRect.bounds} />
+        </div>
+      )
+    }
+  )
+)
 
 // export default MeasureIt()(LegoRenderer);
