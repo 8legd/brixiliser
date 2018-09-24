@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link } from 'gatsby'
+import { connect } from 'react-redux'
 
-const Header = ({ siteTitle }) => (
+const Header = ({ siteTitle, pokemonid, setPokemon }) => (
   <div
     style={{
-      background: 'rebeccapurple',
+      background: '#D11013',
       marginBottom: '1.45rem',
     }}
   >
@@ -26,8 +27,34 @@ const Header = ({ siteTitle }) => (
           {siteTitle}
         </Link>
       </h1>
+      {pokemonid}
+      <button onClick={() => setPokemon(parseInt(pokemonid, 10) + 1)}>
+        Next
+      </button>
+      <button onClick={() => setPokemon(parseInt(pokemonid, 10) - 1)}>
+        Prev
+      </button>
     </div>
   </div>
 )
 
-export default Header
+export default connect(
+  (state, props) => {
+    return {
+      pokemonid: state.pokemonid,
+    }
+  },
+  dispatch => {
+    return {
+      setPokemon: id => {
+        // console.log(id)
+        dispatch({
+          type: 'SET_POKEMON',
+          payload: {
+            id,
+          },
+        })
+      },
+    }
+  }
+)(Header)

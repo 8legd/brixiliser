@@ -4,14 +4,14 @@ import { Link } from 'gatsby'
 import Layout from '../components/layout'
 import LegoRenderer from '../components/LegoRenderer'
 
-const imageData = require('../images/sprites/pokemon/98.png')
+// const imageData = require('../images/sprites/pokemon/3.png')
 // console.log(imageData)
 
 const IndexPage = () => {
   // console.log('imageData', imageData)
   return (
     <Layout>
-      <LegoRenderer sourceData={imageData} />
+      <LegoRenderer /*sourceData={imageData}*/ />
       {/* <h1>Hi people</h1>
     <p>Welcome to your new Gatsby site.</p>
     <p>Now go build something great.</p>

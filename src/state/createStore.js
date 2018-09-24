@@ -1,11 +1,15 @@
 import { createStore as reduxCreateStore } from 'redux'
 
 const reducer = (state, action) => {
-  // if (action.type === `INCREMENT`) {
-  //   return Object.assign({}, state, {
-  //     count: state.count + 1,
-  //   })
-  // }
+  if (action.type === `SET_POKEMON`) {
+    return {
+      ...state,
+      pokemonid: action.payload.id,
+      imageURL: require('../images/sprites/pokemon/' +
+        action.payload.id +
+        '.png'),
+    }
+  }
   return {
     ...state,
   }
@@ -13,7 +17,8 @@ const reducer = (state, action) => {
 
 const initialState = {
   // count: 0,
-  // imageURL: require('../images/sprites/pokemon/25.png'),
+  imageURL: require('../images/sprites/pokemon/2.png'),
+  pokemonid: 2,
 }
 
 const createStore = () =>

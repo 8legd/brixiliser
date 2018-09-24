@@ -83,7 +83,8 @@ class LegoRenderer extends Component {
       ctx.putImageData(scaledImageData, 0, 0)
       // }
 
-      this.drawImageData(this.refs.canvas, imageData)
+      // this.drawImageData(this.refs.canvas, imageData)
+      // this.drawImageData(this.refs.original_canvas, originalImageData)
 
       // this.drawImageData(this.refs.offscreen_canvas, imageData)
       // this.refs.offscreen_canvas.getContext('2d').putImageData(imageData, 0, 0)
@@ -93,8 +94,6 @@ class LegoRenderer extends Component {
       const largestValue =
         cropped.width > cropped.height ? cropped.width : cropped.height
       const tiles = Math.ceil(largestValue / 32)
-
-      this.drawImageData(this.refs.original_canvas, originalImageData)
 
       // const optimalData = calculateFromImageData(scaledImageData)
       const optimalData = calculateFromImageData(cropped)
@@ -158,7 +157,7 @@ class LegoRenderer extends Component {
             width={this.props.width}
             height={this.props.width}
           />
-          <canvas
+          {/* <canvas
             ref="canvas"
             width={this.props.width}
             height={this.props.width}
@@ -167,7 +166,7 @@ class LegoRenderer extends Component {
             ref="original_canvas"
             width={this.props.width}
             height={this.props.width}
-          />
+          /> */}
           <style>{`
           div.wrapper {
             display: flex;
@@ -177,9 +176,11 @@ class LegoRenderer extends Component {
           }
 
           .wrapper canvas {
-            width: 100vw;
-            height: 100vw;
+            width: 48vw;
+            height: 48vw;
+            margin: 0 auto;
             background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
           }
         `}</style>
         </div>
@@ -193,13 +194,14 @@ const mapStateToProps = (state, props) => {
   // console.log('props: ', props)
   return {
     ...props,
-    // sourceData: state.imageURL,
+    sourceData: state.imageURL,
   }
 }
 
 const mapDispatchToProps = dispatch => {
   // console.log(dispatch);
   return {
+    // sourceData:
     // addCount: bindActionCreators(addCount, dispatch)
     // setImageData: bindActionCreators(setImageData, dispatch),
   }
