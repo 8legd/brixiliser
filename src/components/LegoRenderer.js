@@ -30,7 +30,7 @@ class LegoRenderer extends Component {
   }
 
   componentDidMount() {
-    console.log('componentDidMount')
+    // console.log('componentDidMount')
     this.updateCanvas()
   }
 
@@ -39,24 +39,24 @@ class LegoRenderer extends Component {
   // }
 
   componentDidUpdate(prevProps) {
-    console.log(
-      'componentDidUpdate',
-      this.props.sourceData !== prevProps.sourceData
-    )
+    // console.log(
+    //   'componentDidUpdate',
+    //   this.props.sourceData !== prevProps.sourceData
+    // )
     // if (this.props.sourceData !== prevProps.sourceData) {
     this.updateCanvas()
     // }
   }
 
   updateCanvas() {
-    console.log('updateCanvas', this.props.sourceData)
+    // console.log('updateCanvas', this.props.sourceData)
     if (!this.props.sourceData) {
       console.error('sourceData is undefined')
       return
     }
     convertURIToImageData(this.props.sourceData).then(originalImageData => {
       // setImageData(originalImageData);
-      console.log('stuff')
+      // console.log('stuff')
 
       let { imageData } = remapPixelColours(originalImageData)
 
@@ -85,21 +85,31 @@ class LegoRenderer extends Component {
 
       this.drawImageData(this.refs.canvas, imageData)
 
+      // this.drawImageData(this.refs.offscreen_canvas, imageData)
+      // this.refs.offscreen_canvas.getContext('2d').putImageData(imageData, 0, 0)
+      const cropped = cropCanvas(this.refs.offscreen_canvas)
+      // console.log(cropped.width, cropped.height)
+      // console.log(cropped)
+      const largestValue =
+        cropped.width > cropped.height ? cropped.width : cropped.height
+      const tiles = Math.ceil(largestValue / 32)
+
       this.drawImageData(this.refs.original_canvas, originalImageData)
 
-      // const cropped = cropCanvas(this.refs.canvas)
-
-      const optimalData = calculateFromImageData(scaledImageData)
-      console.log('optimalData', optimalData)
+      // const optimalData = calculateFromImageData(scaledImageData)
+      const optimalData = calculateFromImageData(cropped)
+      // console.log('optimalData', optimalData)
 
       renderImageDataAsLego(
         this.refs.canvas_lego,
         // this.props.height,
         // 264,
         optimalData,
-        96,
-        96
-        // this.props.width,
+        32 * tiles,
+        32 * tiles,
+        Math.floor((32 * tiles - cropped.width) / 2),
+        Math.floor((32 * tiles - cropped.height) / 2)
+        // this.props.width,s
         // this.props.height
       )
       // }
@@ -110,7 +120,7 @@ class LegoRenderer extends Component {
   }
 
   drawImageData(canvas, imageData) {
-    console.log('drawImageData')
+    // console.log('drawImageData')
     // const canvas =
     const ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
@@ -119,7 +129,7 @@ class LegoRenderer extends Component {
     const pixelScaler = Math.floor(this.props.width / imageData.width)
     // const pixelScaler = this.props.width / imageData.width
 
-    console.log('pixelScaler', pixelScaler)
+    // console.log('pixelScaler', pixelScaler)
 
     // this.setState({
     //   dimensions: {
@@ -136,36 +146,43 @@ class LegoRenderer extends Component {
   render() {
     return (
       <div className={this.props.className}>
-        <canvas style={{ display: 'none' }} ref="offscreen_canvas" />
         <canvas
-          ref="canvas_lego"
-          width={this.props.width}
-          height={this.props.width}
+          style={{ position: 'absolute', background: 'red', display: 'none' }}
+          width={96}
+          height={96}
+          ref="offscreen_canvas"
         />
-        <canvas
-          ref="canvas"
-          width={this.props.width}
-          height={this.props.width}
-        />
-        <canvas
-          ref="original_canvas"
-          width={this.props.width}
-          height={this.props.width}
-        />
-        <style>{`
-          div {
+        <div className="wrapper">
+          <canvas
+            ref="canvas_lego"
+            width={this.props.width}
+            height={this.props.width}
+          />
+          <canvas
+            ref="canvas"
+            width={this.props.width}
+            height={this.props.width}
+          />
+          <canvas
+            ref="original_canvas"
+            width={this.props.width}
+            height={this.props.width}
+          />
+          <style>{`
+          div.wrapper {
             display: flex;
             flex: 1;
             justify-content: center;
             flex-direction: column;
           }
 
-          canvas {
+          .wrapper canvas {
             width: 100vw;
             height: 100vw;
             background: white;
           }
         `}</style>
+        </div>
       </div>
     )
   }
@@ -173,7 +190,7 @@ class LegoRenderer extends Component {
 
 const mapStateToProps = (state, props) => {
   // console.log('imageURL', state)
-  console.log('props: ', props)
+  // console.log('props: ', props)
   return {
     ...props,
     // sourceData: state.imageURL,
@@ -198,8 +215,8 @@ export default connect(
 )(
   withContentRect('bounds')(
     ({ measureRef, measure, contentRect, ...props }) => {
-      console.log('contentRect.bounds', contentRect.bounds)
-      console.log('props', props)
+      // console.log('contentRect.bounds', contentRect.bounds)
+      // console.log('props', props)
       return (
         <div ref={measureRef}>
           <LegoRenderer {...props} {...contentRect.bounds} />

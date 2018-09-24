@@ -39,7 +39,9 @@ export function renderImageDataAsLego(
   //   height,
   optimalBricks,
   imageWidth,
-  imageHeight
+  imageHeight,
+  offsetX,
+  offsetY
 ) {
   const height = imageWidth < imageHeight ? imageHeight : imageWidth
   const outputContext = outputCanvas.getContext('2d')
@@ -91,8 +93,8 @@ export function renderImageDataAsLego(
   if (optimalBricks) {
     for (let i = 0, l = optimalBricks.length; i < l; i++) {
       // if (!optimalBricks[i].ignore) {
-      let xCount = optimalBricks[i].x
-      let yCount = optimalBricks[i].y
+      let xCount = optimalBricks[i].x + offsetX
+      let yCount = optimalBricks[i].y + offsetY
       context.fillStyle = optimalBricks[i].colour
       // if (Color(optimalBricks[i].colour).light()) {
       context.strokeStyle = '#000000'
