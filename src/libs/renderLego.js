@@ -1,7 +1,7 @@
 // import remapPixelColours from './lego/remapPixelColours'
 import Color from 'color'
 
-const spacer = 1 //0.25 //1;
+const spacer = 0.25 //1;
 
 // function render() {
 //   this.width = this.$el.offsetWidth
@@ -53,17 +53,40 @@ export function renderImageDataAsLego(
   context.lineWidth = 0.25
   context.fillStyle = '#ffffff'
 
-  //   context.fillRect(0, 0, 64 * brickSize, 64 * brickSize)
-  //   context.strokeRect(0, 0, 32 * brickSize, 32 * brickSize)
-  //   context.strokeRect(0, 32 * brickSize, 32 * brickSize, 32 * brickSize)
-  //   context.strokeRect(32 * brickSize, 0, 32 * brickSize, 32 * brickSize)
-  //   context.strokeRect(
-  //     32 * brickSize,
-  //     32 * brickSize,
-  //     32 * brickSize,
-  //     32 * brickSize
-  //   )
-  //   drawStuds(context, brickSize, spacer, 0, 0, 64, 64)
+  const drawTile = (row, col) => {
+    const size = 32
+    context.fillRect(
+      size * (row * brickSize),
+      size * (col * brickSize),
+      size * (row + 1) * brickSize,
+      size * (col + 1) * brickSize
+    )
+    context.strokeRect(
+      size * (row * brickSize),
+      size * (col * brickSize),
+      size * (row + 1) * brickSize,
+      size * (col + 1) * brickSize
+    )
+    // context.strokeRect(0, 32 * brickSize, 32 * brickSize, 32 * brickSize)
+    // context.strokeRect(32 * brickSize, 0, 32 * brickSize, 32 * brickSize)
+    // context.strokeRect(
+    //   32 * brickSize,
+    //   32 * brickSize,
+    //   32 * brickSize,
+    //   32 * brickSize
+    // )
+    drawStuds(context, brickSize, spacer, size * row, size * col, size, size)
+  }
+
+  drawTile(0, 0)
+  drawTile(0, 1)
+  drawTile(0, 2)
+  drawTile(1, 0)
+  drawTile(1, 1)
+  drawTile(1, 2)
+  drawTile(2, 0)
+  drawTile(2, 1)
+  drawTile(2, 2)
 
   if (optimalBricks) {
     for (let i = 0, l = optimalBricks.length; i < l; i++) {
