@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: 'Bricksiliser™',
+    title: 'Brixiliser™',
   },
   plugins: [
     'gatsby-plugin-react-helmet',
