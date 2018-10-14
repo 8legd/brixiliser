@@ -1,0 +1,2 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{1055:function(n,e,t){"use strict";t.r(e);t(30);var a=t(0),u=t.n(a),c=t(60),r=t(1060),i=t(1085),o=Object(c.b)(function(n,e){return Object.assign({},e,{sourceData:n.imageURL})},function(n){return{}})(i.a);e.default=function(){return u.a.createElement(r.a,null,u.a.createElement(o,null))}}}]);
+//# sourceMappingURL=component---src-pages-index-jsx-997c622cad38b7fef453.js.map
