@@ -2,6 +2,7 @@ module.exports = {
   siteMetadata: {
     title: 'Brixiliser™',
   },
+  pathPrefix: '/brixiliser',
   plugins: [
     'gatsby-plugin-react-helmet',
     {
