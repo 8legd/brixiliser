@@ -7,6 +7,10 @@ const SecondPage = () => (
   <Layout>
     <LegoRenderer
       sourceData={require('../images/christmas-tree.png')}
+      orientation="topDown"
+    />
+    <LegoRenderer
+      sourceData={require('../images/christmas-tree.png')}
       orientation="sideView"
     />
   </Layout>

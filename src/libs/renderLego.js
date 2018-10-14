@@ -9,16 +9,16 @@ export default function renderImageDataAsLego({
   imageHeight,
   offsetX,
   offsetY,
-  orentation,
+  orientation,
 }) {
   const height = imageWidth < imageHeight ? imageHeight : imageWidth
   const outputContext = outputCanvas.getContext('2d')
   outputContext.clearRect(0, 0, outputCanvas.width, outputCanvas.height)
-  let canvas = document.createElement('canvas')
+  const canvas = document.createElement('canvas')
   canvas.width = outputCanvas.width
   canvas.height = outputCanvas.height
-  let context = canvas.getContext('2d')
-  let brickSize = outputCanvas.height / height
+  const context = canvas.getContext('2d')
+  const brickSize = outputCanvas.height / height
 
   context.lineWidth = 0.25
   context.fillStyle = '#ffffff'
@@ -37,15 +37,7 @@ export default function renderImageDataAsLego({
       size * (row + 1) * brickSize,
       size * (col + 1) * brickSize
     )
-    // context.strokeRect(0, 32 * brickSize, 32 * brickSize, 32 * brickSize)
-    // context.strokeRect(32 * brickSize, 0, 32 * brickSize, 32 * brickSize)
-    // context.strokeRect(
-    //   32 * brickSize,
-    //   32 * brickSize,
-    //   32 * brickSize,
-    //   32 * brickSize
-    // )
-    if (orentation === 'topDown') {
+    if (orientation === 'topDown') {
       drawStuds(context, brickSize, spacer, size * row, size * col, size, size)
     }
   }
@@ -63,8 +55,8 @@ export default function renderImageDataAsLego({
   if (optimalBricks) {
     for (let i = 0, l = optimalBricks.length; i < l; i++) {
       // if (!optimalBricks[i].ignore) {
-      let xCount = optimalBricks[i].x + offsetX
-      let yCount = optimalBricks[i].y + offsetY
+      const xCount = optimalBricks[i].x + offsetX
+      const yCount = optimalBricks[i].y + offsetY
       context.fillStyle = optimalBricks[i].colour
       // if (Color(optimalBricks[i].colour).light()) {
       context.strokeStyle = '#000000'
@@ -86,7 +78,7 @@ export default function renderImageDataAsLego({
 
       context.fillStyle = Color(optimalBricks[i].colour).lighten(0.1)
 
-      if (orentation === 'topDown') {
+      if (orientation === 'topDown') {
         drawStuds(
           context,
           brickSize,
@@ -99,8 +91,8 @@ export default function renderImageDataAsLego({
       }
       // }
     }
-    let ratio = imageWidth / imageHeight
-    let isLandscape = ratio > 1
+    const ratio = imageWidth / imageHeight
+    const isLandscape = ratio > 1
     let xPos = 0
     let yPos = 0
     if (!isLandscape) {

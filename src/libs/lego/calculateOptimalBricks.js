@@ -90,18 +90,24 @@ const calculateFromImageData = ({
           }
         }
 
-        for (let a = 0, l = brickSizes.length; a < l; a++) {
-          let vbrickFit = genericBrickFit(i, brickSizes[a][0], brickSizes[a][1])
-          if (vbrickFit.fits) {
-            thisBrick.width = brickSizes[a][0]
-            thisBrick.height = brickSizes[a][1]
-            vbrickFit.blocks.map(brick => {
-              // brick.colour = undefined
-              brick.ignore = true
-              // brick.width = 0
-              // brick.height = 0
-            })
-            break
+        if (orientation === 'topDown') {
+          for (let a = 0, l = brickSizes.length; a < l; a++) {
+            let vbrickFit = genericBrickFit(
+              i,
+              brickSizes[a][0],
+              brickSizes[a][1]
+            )
+            if (vbrickFit.fits) {
+              thisBrick.width = brickSizes[a][0]
+              thisBrick.height = brickSizes[a][1]
+              vbrickFit.blocks.map(brick => {
+                // brick.colour = undefined
+                brick.ignore = true
+                // brick.width = 0
+                // brick.height = 0
+              })
+              break
+            }
           }
         }
       }
@@ -212,24 +218,26 @@ const calculateFromImageData = ({
             }
           }
 
-          for (let a = 0, l = brickSizes.length; a < l; a++) {
-            const vbrickFit = genericBrickFit(
-              i,
-              brickSizes[a][0],
-              brickSizes[a][1]
-            )
-            if (vbrickFit.fits) {
-              thisBrick.width = brickSizes[a][0]
-              thisBrick.height = brickSizes[a][1]
-              // thisBrick.ignore = false
-              // console.log(vbrickFit.blocks.length)
-              vbrickFit.blocks.map(brick => {
-                // brick.colour = undefined
-                brick.ignore = true
-                // brick.width = 0
-                // brick.height = 0
-              })
-              break
+          if (orientation === 'topDown') {
+            for (let a = 0, l = brickSizes.length; a < l; a++) {
+              const vbrickFit = genericBrickFit(
+                i,
+                brickSizes[a][0],
+                brickSizes[a][1]
+              )
+              if (vbrickFit.fits) {
+                thisBrick.width = brickSizes[a][0]
+                thisBrick.height = brickSizes[a][1]
+                // thisBrick.ignore = false
+                // console.log(vbrickFit.blocks.length)
+                vbrickFit.blocks.map(brick => {
+                  // brick.colour = undefined
+                  brick.ignore = true
+                  // brick.width = 0
+                  // brick.height = 0
+                })
+                break
+              }
             }
           }
         }
@@ -262,6 +270,7 @@ const calculateFromImageData = ({
           }
         }
       }
+
       for (let j = 1, jl = height; j < jl; j++) {
         const nextLineBrick =
           outputBricks[sourceBrickIndex + i + j * imageData.width]
@@ -272,7 +281,8 @@ const calculateFromImageData = ({
           if (
             nextLineBrick.width === 1 &&
             nextLineBrick.height === 1 &&
-            !nextLineBrick.ignore
+            !nextLineBrick.ignore &&
+            orientation === 'topDown'
           ) {
             additionalBricks.push(nextLineBrick)
           } else {
@@ -309,7 +319,7 @@ const calculateFromImageData = ({
     // const colour = values[0].colour
 
     const yahtzeeQualify = values.every((val, i, values) => {
-      if (!(values[0].width == 1 && values[0].height == 1) || !!val.ignore) {
+      if (!(values[0].width === 1 && values[0].height === 1) || !!val.ignore) {
         return false
       }
       // if ((val.width === 0 && val.height === 0) || val.ignore) {
