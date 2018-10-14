@@ -1,48 +1,16 @@
-// import remapPixelColours from './lego/remapPixelColours'
 import Color from 'color'
 
-const spacer = 0.25 //1;
+const spacer = 0.25
 
-// function render() {
-//   this.width = this.$el.offsetWidth
-//   this.height = this.$el.offsetHeight
-
-//   let optimalBricks = this._props.optimalBricks
-
-//   if (!this._props.optimalBricks) {
-//     return
-//   }
-
-//   var canvas = this.$refs.canvas
-//   let ctx = canvas.getContext('2d')
-
-//   // ctx.imageSmoothingEnabled = false
-
-//   if (!this._props.imagedata || !this._props.imagedata.data) {
-//     return
-//   }
-
-//   let { imageData } = remapPixelColours(this._props.imagedata)
-
-//   // let optimalBricks = CalculateOptimalBricks.calculateFromImageData(imageData)
-//   let width = imageData.width
-//   let height = imageData.height
-//   // console.log(width, height)
-//   let imageSize = width < height ? height : width
-
-//   renderImageDataAsLego(ctx, canvas, imageSize, optimalBricks, width, height)
-// }
-
-export function renderImageDataAsLego(
-  //   outputContext,
+export default function renderImageDataAsLego({
   outputCanvas,
-  //   height,
   optimalBricks,
   imageWidth,
   imageHeight,
   offsetX,
-  offsetY
-) {
+  offsetY,
+  orentation,
+}) {
   const height = imageWidth < imageHeight ? imageHeight : imageWidth
   const outputContext = outputCanvas.getContext('2d')
   outputContext.clearRect(0, 0, outputCanvas.width, outputCanvas.height)
@@ -156,5 +124,3 @@ function drawStuds(ctx, brickSize, spacer, xCount, yCount, width, height) {
     }
   }
 }
-
-// export default render

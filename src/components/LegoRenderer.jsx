@@ -5,7 +5,7 @@ import { withContentRect } from 'react-measure'
 import { remapPixelColours } from '../libs/colour-utils'
 import { convertURIToImageData, scaleImageData } from '../libs/image-utils'
 import calculateFromImageData from '../libs/lego/calculateOptimalBricks'
-import { renderImageDataAsLego } from '../libs/renderLego'
+import renderImageDataAsLego from '../libs/renderLego'
 import cropCanvas from '../libs/crop-canvas'
 
 class LegoRenderer extends Component {
@@ -25,7 +25,7 @@ class LegoRenderer extends Component {
   }
 
   updateCanvas() {
-    const { sourceData } = this.props
+    const { sourceData, orientation } = this.props
 
     if (!sourceData) {
       console.error('sourceData is undefined')
@@ -52,14 +52,15 @@ class LegoRenderer extends Component {
 
       const optimalData = calculateFromImageData(cropped)
 
-      renderImageDataAsLego(
-        this.refs.canvas_lego,
-        optimalData,
-        32 * tiles,
-        32 * tiles,
-        Math.floor((32 * tiles - cropped.width) / 2),
-        Math.floor((32 * tiles - cropped.height) / 2)
-      )
+      renderImageDataAsLego({
+        outputCanvas: this.refs.canvas_lego,
+        optimalBricks: optimalData,
+        imageWidth: 32 * tiles,
+        imageHeight: 32 * tiles,
+        offsetX: Math.floor((32 * tiles - cropped.width) / 2),
+        offsetY: Math.floor((32 * tiles - cropped.height) / 2),
+        orientation,
+      })
     })
   }
 
@@ -67,7 +68,9 @@ class LegoRenderer extends Component {
     const ctx = canvas.getContext('2d')
     ctx.imageSmoothingEnabled = false
 
-    const pixelScaler = Math.floor(this.props.width / imageData.width)
+    const { width } = this.props
+
+    const pixelScaler = Math.floor(width / imageData.width)
 
     const scaledImageData = scaleImageData(ctx, imageData, pixelScaler)
 
@@ -75,8 +78,9 @@ class LegoRenderer extends Component {
   }
 
   render() {
+    const { className, width, height } = this.props
     return (
-      <div className={this.props.className}>
+      <div className={className}>
         <canvas
           style={{ position: 'absolute', background: 'red', display: 'none' }}
           width={96}
@@ -84,20 +88,16 @@ class LegoRenderer extends Component {
           ref="offscreen_canvas"
         />
         <div className="wrapper">
-          <canvas
-            ref="canvas_lego"
-            width={this.props.width}
-            height={this.props.width}
-          />
+          <canvas ref="canvas_lego" width={width} height={width} />
           {/* <canvas
             ref="canvas"
-            width={this.props.width}
-            height={this.props.width}
+            width={width}
+            height={width}
           />
           <canvas
             ref="original_canvas"
-            width={this.props.width}
-            height={this.props.width}
+            width={width}
+            height={width}
           /> */}
           <style>{`
           div.wrapper {
@@ -123,6 +123,15 @@ class LegoRenderer extends Component {
 
 LegoRenderer.propTypes = {
   sourceData: PropTypes.string.isRequired,
+  orientation: PropTypes.oneOf(['topDown', 'sideView']),
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  className: PropTypes.string,
+}
+
+LegoRenderer.defaultProps = {
+  orientation: 'topDown',
+  className: '',
 }
 
 export default withContentRect('bounds')(
