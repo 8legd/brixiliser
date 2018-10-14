@@ -31,37 +31,45 @@ class LegoRenderer extends Component {
       console.error('sourceData is undefined')
       return
     }
-    convertURIToImageData(sourceData).then(originalImageData => {
-      let { imageData } = remapPixelColours(originalImageData)
 
-      if (!imageData) return
-      this.refs.offscreen_canvas.width = imageData.width
-      this.refs.offscreen_canvas.height = imageData.height
+    convertURIToImageData(sourceData)
+      .then(originalImageData => {
+        const { imageData } = remapPixelColours(originalImageData)
+        if (!imageData) throw new Error('No Image Data is defined')
 
-      const ctx = this.refs.offscreen_canvas.getContext('2d')
-      ctx.imageSmoothingEnabled = false
+        this.refs.offscreen_canvas.width = imageData.width
+        this.refs.offscreen_canvas.height = imageData.height
 
-      const scaledImageData = scaleImageData(ctx, imageData, 1)
-      ctx.putImageData(scaledImageData, 0, 0)
+        const ctx = this.refs.offscreen_canvas.getContext('2d')
+        ctx.imageSmoothingEnabled = false
 
-      const cropped = cropCanvas(this.refs.offscreen_canvas)
+        const scaledImageData = scaleImageData(ctx, imageData, 1)
+        ctx.putImageData(scaledImageData, 0, 0)
 
-      const largestValue =
-        cropped.width > cropped.height ? cropped.width : cropped.height
-      const tiles = Math.ceil(largestValue / 32)
+        const cropped = cropCanvas(this.refs.offscreen_canvas)
 
-      const optimalData = calculateFromImageData(cropped)
+        const largestValue =
+          cropped.width > cropped.height ? cropped.width : cropped.height
+        const tiles = Math.ceil(largestValue / 32)
 
-      renderImageDataAsLego({
-        outputCanvas: this.refs.canvas_lego,
-        optimalBricks: optimalData,
-        imageWidth: 32 * tiles,
-        imageHeight: 32 * tiles,
-        offsetX: Math.floor((32 * tiles - cropped.width) / 2),
-        offsetY: Math.floor((32 * tiles - cropped.height) / 2),
-        orientation,
+        const optimalData = calculateFromImageData({
+          imageData: cropped,
+          orientation,
+        })
+
+        renderImageDataAsLego({
+          outputCanvas: this.refs.canvas_lego,
+          optimalBricks: optimalData,
+          imageWidth: 32 * tiles,
+          imageHeight: 32 * tiles,
+          offsetX: Math.floor((32 * tiles - cropped.width) / 2),
+          offsetY: Math.floor((32 * tiles - cropped.height) / 2),
+          orientation,
+        })
       })
-    })
+      .catch(e => {
+        console.error(e)
+      })
   }
 
   drawImageData(canvas, imageData) {

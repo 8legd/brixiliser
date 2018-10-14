@@ -1,25 +1,25 @@
 import {
   r2h,
-  h2r,
   getNextBestColourMatch,
-  hexAverage,
   mapColorToPalette,
 } from './colour-interpolate'
 import dimensions from './dimensions'
-var DeltaE = require('delta-e')
 
-const calculateFromImageData = originalImageData => {
+const calculateFromImageData = ({
+  imageData: originalImageData,
+  orientation,
+}) => {
   let currentColour
-  let outputBricks = []
+  const outputBricks = []
 
-  let imageData = {
+  const imageData = {
     width: originalImageData.width,
     height: originalImageData.height,
     data: new Uint8ClampedArray(originalImageData.data),
   }
 
   for (var i = 0; i < imageData.data.length; i += 4) {
-    let color = mapColorToPalette(
+    const color = mapColorToPalette(
       imageData.data[i],
       imageData.data[i + 1],
       imageData.data[i + 2]
@@ -27,23 +27,14 @@ const calculateFromImageData = originalImageData => {
     imageData.data[i] = color.r
     imageData.data[i + 1] = color.g
     imageData.data[i + 2] = color.b
-    // let hexColor = r2h([imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]]);
-    // if (!imageStats[hexColor]) {
-    //   imageStats[hexColor] = 0;
-    // }
-    // if (imageData.data[i + 3] === 255) {
-    //   imageStats[hexColor]++;
-    // }
   }
 
-  // console.log(imageData.width, imageData.height)
-
-  let topLeftPixelValue = r2h([
+  const topLeftPixelValue = r2h([
     imageData.data[0],
     imageData.data[1],
     imageData.data[2],
   ])
-  let topLeftAlpha = imageData.data[3]
+  const topLeftAlpha = imageData.data[3]
 
   for (var i = 0; i < imageData.data.length; i += 4) {
     currentColour = r2h([
@@ -51,21 +42,19 @@ const calculateFromImageData = originalImageData => {
       imageData.data[i + 1],
       imageData.data[i + 2],
     ])
-    let alpha = imageData.data[i + 3]
+    const alpha = imageData.data[i + 3]
 
-    let isTransparentBlock =
+    const isTransparentBlock =
       alpha !== 255 ||
       (currentColour === topLeftPixelValue && alpha === topLeftAlpha)
     if (isTransparentBlock) {
       currentColour = undefined
     }
-    // let isTransparentBlock = false
 
     outputBricks.push({
       colour: currentColour,
       ignore: !!isTransparentBlock,
       index: i,
-      // ref: [imageData.data[i], imageData.data[i + 1], imageData.data[i + 2]]
     })
   }
 
@@ -80,10 +69,10 @@ const calculateFromImageData = originalImageData => {
 
   function mergeBlocks(outputBricks) {
     for (let i = 0; i < outputBricks.length - 1; i++) {
-      let thisBrick = outputBricks[i]
-      let brickColour = thisBrick.colour
+      const thisBrick = outputBricks[i]
+      const brickColour = thisBrick.colour
       if (!thisBrick.ignore) {
-        let brickSizes = getBrickSizesForColour(brickColour, true)
+        const brickSizes = getBrickSizesForColour(brickColour, true)
 
         for (let a = 0, l = brickSizes.length; a < l; a++) {
           let hbrickFit = genericBrickFit(i, brickSizes[a][1], brickSizes[a][0])
@@ -133,11 +122,11 @@ const calculateFromImageData = originalImageData => {
     maxCount++
     let invalidCount = 0
     for (let i = 0; i < outputBricks.length - 1; i++) {
-      let thisBrick = outputBricks[i]
-      let brickColour = thisBrick.colour
+      const thisBrick = outputBricks[i]
+      const brickColour = thisBrick.colour
       if (!thisBrick.ignore) {
-        let brickSizes = getBrickSizesForColour(brickColour, false)
-        let hasSinglePixelBlock =
+        const brickSizes = getBrickSizesForColour(brickColour, false)
+        const hasSinglePixelBlock =
           brickSizes.filter(brick => {
             return parseInt(brick[0], 10) === 1 && parseInt(brick[1], 10) === 1
           }).length > 0
@@ -181,35 +170,29 @@ const calculateFromImageData = originalImageData => {
 
   function getBrickSizesForColour(colour, ignoreSmallOnes) {
     return dimensions
+      .filter(dimension => dimension[2] === colour)
       .filter(dimension => {
-        //  console.log(dimension[2], brickColour);
-        return dimension[2] === colour
-      })
-      .filter(dimension => {
-        let width = parseInt(dimension[0], 10)
-        let height = parseInt(dimension[1], 10)
+        const width = parseInt(dimension[0], 10)
+        const height = parseInt(dimension[1], 10)
         if (ignoreSmallOnes) {
           return width > 1 && height > 1
-        } else {
-          return width === 1 || height === 1
         }
+        return width === 1 || height === 1
       })
-      .sort((a, b) => {
-        return parseInt(a[0], 10) - parseInt(b[0], 10)
-      })
+      .sort((a, b) => parseInt(a[0], 10) - parseInt(b[0], 10))
       .reverse()
   }
 
   function mergeSingles(outputBricks) {
     for (let i = 0; i < outputBricks.length - 1; i++) {
-      let thisBrick = outputBricks[i]
-      let brickColour = thisBrick.colour
+      const thisBrick = outputBricks[i]
+      const brickColour = thisBrick.colour
       if (!thisBrick.ignore) {
-        if (thisBrick.width == 1 && thisBrick.height == 1) {
-          let brickSizes = getBrickSizesForColour(brickColour, false)
+        if (thisBrick.width === 1 && thisBrick.height === 1) {
+          const brickSizes = getBrickSizesForColour(brickColour, false)
 
           for (let a = 0, l = brickSizes.length; a < l; a++) {
-            let hbrickFit = genericBrickFit(
+            const hbrickFit = genericBrickFit(
               i,
               brickSizes[a][1],
               brickSizes[a][0]
@@ -230,7 +213,7 @@ const calculateFromImageData = originalImageData => {
           }
 
           for (let a = 0, l = brickSizes.length; a < l; a++) {
-            let vbrickFit = genericBrickFit(
+            const vbrickFit = genericBrickFit(
               i,
               brickSizes[a][0],
               brickSizes[a][1]
@@ -255,11 +238,11 @@ const calculateFromImageData = originalImageData => {
   }
 
   function genericBrickFit(sourceBrickIndex, width, height) {
-    let thisBrick = outputBricks[sourceBrickIndex]
-    let additionalBricks = []
+    const thisBrick = outputBricks[sourceBrickIndex]
+    const additionalBricks = []
     for (let i = 0, l = width; i < l; i++) {
       if (i !== 0) {
-        let nextColBrick = outputBricks[sourceBrickIndex + i]
+        const nextColBrick = outputBricks[sourceBrickIndex + i]
         // if (!nextColBrick) {
         //   additionalBricks.push(nextColBrick)
         // }
@@ -280,15 +263,15 @@ const calculateFromImageData = originalImageData => {
         }
       }
       for (let j = 1, jl = height; j < jl; j++) {
-        let nextLineBrick =
+        const nextLineBrick =
           outputBricks[sourceBrickIndex + i + j * imageData.width]
         // if (!nextLineBrick) {
         //   additionalBricks.push(nextLineBrick)
         // }
         if (nextLineBrick) {
           if (
-            nextLineBrick.width == 1 &&
-            nextLineBrick.height == 1 &&
+            nextLineBrick.width === 1 &&
+            nextLineBrick.height === 1 &&
             !nextLineBrick.ignore
           ) {
             additionalBricks.push(nextLineBrick)
@@ -303,7 +286,7 @@ const calculateFromImageData = originalImageData => {
       }
     }
 
-    let remainingDistanceToEdge = imageData.width - (i % imageData.width)
+    const remainingDistanceToEdge = imageData.width - (i % imageData.width)
     if (remainingDistanceToEdge < width) {
       return {
         fits: false,
@@ -321,11 +304,11 @@ const calculateFromImageData = originalImageData => {
       return { fits: false }
     }
 
-    let values = [].concat(thisBrick, additionalBricks)
+    const values = [].concat(thisBrick, additionalBricks)
 
     // const colour = values[0].colour
 
-    let yahtzeeQualify = values.every((val, i, values) => {
+    const yahtzeeQualify = values.every((val, i, values) => {
       if (!(values[0].width == 1 && values[0].height == 1) || !!val.ignore) {
         return false
       }
@@ -341,10 +324,7 @@ const calculateFromImageData = originalImageData => {
     }
   }
 
-  const rtn = outputBricks.filter(brick => {
-    // return brick.colour !== undefined && !brick.ignore
-    return !brick.ignore
-  })
+  const rtn = outputBricks.filter(brick => !brick.ignore)
 
   return rtn
 }
