@@ -1,12 +1,12 @@
 import colours from './data/available-lego-brick-colours'
 
-const getInfoForColour = (hex) => {
+const getInfoForColour = hex => {
   let rtn = {
     name: '? ' + hex,
-    hex: hex
+    hex: hex,
   }
 
-  colours.forEach((entry) => {
+  colours.forEach(entry => {
     if (entry.hex === hex) {
       rtn = entry
     }

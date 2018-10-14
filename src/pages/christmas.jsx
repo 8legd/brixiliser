@@ -5,7 +5,10 @@ import LegoRenderer from '../components/LegoRenderer'
 
 const SecondPage = () => (
   <Layout>
-    <LegoRenderer sourceData={require('../images/christmas-tree.png')} />
+    <LegoRenderer
+      sourceData={require('../images/christmas-tree.png')}
+      orientation="sideView"
+    />
   </Layout>
 )
 

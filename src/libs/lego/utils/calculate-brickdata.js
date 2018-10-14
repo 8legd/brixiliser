@@ -1,8 +1,8 @@
-export default function calculateBrickData (brickData) {
+export default function calculateBrickData(brickData) {
   // console.log('calculateBrickData')
   let rolledUpBricks = {}
 
-  brickData.map((brick) => {
+  brickData.map(brick => {
     // if (!brick.ignore) {
     let largest = brick.width > brick.height ? brick.width : brick.height
     let smallest = brick.width < brick.height ? brick.width : brick.height

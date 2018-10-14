@@ -45,7 +45,9 @@ export default function renderImageDataAsLego({
     //   32 * brickSize,
     //   32 * brickSize
     // )
-    drawStuds(context, brickSize, spacer, size * row, size * col, size, size)
+    if (orentation === 'topDown') {
+      drawStuds(context, brickSize, spacer, size * row, size * col, size, size)
+    }
   }
 
   drawTile(0, 0)
@@ -83,15 +85,18 @@ export default function renderImageDataAsLego({
       )
 
       context.fillStyle = Color(optimalBricks[i].colour).lighten(0.1)
-      drawStuds(
-        context,
-        brickSize,
-        spacer,
-        xCount,
-        yCount,
-        optimalBricks[i].width,
-        optimalBricks[i].height
-      )
+
+      if (orentation === 'topDown') {
+        drawStuds(
+          context,
+          brickSize,
+          spacer,
+          xCount,
+          yCount,
+          optimalBricks[i].width,
+          optimalBricks[i].height
+        )
+      }
       // }
     }
     let ratio = imageWidth / imageHeight

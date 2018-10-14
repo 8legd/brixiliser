@@ -248,8 +248,8 @@ const calculateFromImageData = ({
         // }
         if (nextColBrick) {
           if (
-            nextColBrick.width == 1 &&
-            nextColBrick.height == 1 &&
+            nextColBrick.width === 1 &&
+            nextColBrick.height === 1 &&
             !nextColBrick.ignore
           ) {
             additionalBricks.push(nextColBrick)
