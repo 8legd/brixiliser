@@ -24,9 +24,9 @@ const initialState = {
 const createStore = () =>
   reduxCreateStore(
     reducer,
-    initialState /* preloadedState, */,
-    window &&
-      window.__REDUX_DEVTOOLS_EXTENSION__ &&
-      window.__REDUX_DEVTOOLS_EXTENSION__()
+    initialState /* preloadedState, */
+    // window &&
+    //   window.__REDUX_DEVTOOLS_EXTENSION__ &&
+    //   window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 export default createStore
