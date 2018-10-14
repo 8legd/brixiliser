@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
 
-import Header from './header'
-import ImageUpload from './ImageUpload'
+import Header from '../Header'
+import ImageUpload from '../ImageUpload'
 
 import './layout.css'
 
@@ -20,7 +20,7 @@ const Layout = ({ children }) => (
       }
     `}
     render={data => (
-      <>
+      <div>
         <Helmet
           title={data.site.siteMetadata.title}
           meta={[
@@ -40,7 +40,7 @@ const Layout = ({ children }) => (
           {/* <ImageUpload /> */}
           {children}
         </div>
-      </>
+      </div>
     )}
   />
 )

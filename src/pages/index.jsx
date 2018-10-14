@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Layout from '../components/layout'
+import Layout from '../components/Layout'
 import LegoRenderer from '../components/LegoRenderer'
 
 const mapStateToProps = (state, props) => {

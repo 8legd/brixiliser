@@ -47,7 +47,6 @@ export default connect(
   dispatch => {
     return {
       setPokemon: id => {
-        // console.log(id)
         dispatch({
           type: 'SET_POKEMON',
           payload: {
