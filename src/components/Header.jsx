@@ -3,7 +3,7 @@ import { Link } from 'gatsby'
 import { connect } from 'react-redux'
 
 const Header = ({ siteTitle, pokemonid, setPokemon }) => (
-  <div
+  <header
     style={{
       background: '#D11013',
       marginBottom: '1.45rem',
@@ -35,7 +35,7 @@ const Header = ({ siteTitle, pokemonid, setPokemon }) => (
         Prev
       </button>
     </div>
-  </div>
+  </header>
 )
 
 export default connect(
